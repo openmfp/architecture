@@ -38,6 +38,7 @@ metadata:
   generation: 1
 spec:
   remoteConfiguration:
+    # The remote configuration can be a remote yaml or json file. 
     url: https://example.com/example-extension-configuration.yaml
     authentication:
       type: basic # none (default), client credentials, bearer, basic
@@ -50,65 +51,71 @@ spec:
         # - clientsecret (client credentials)
         # - token (token)
         name: example-extension-credentials 
-  # Below is just an example of a content configuration, the actual structure will be covered in a separate RFC
+  # Below is just an example of a content configuration, the actual structure will be covered in a separate RFC.
   # The extension provider must provide either a remoteConfiguration OR a inlineConfiguration
-  # inlineConfiguration: | 
-  #   version: "3.0"
-  #   nodeConfiguration:
-  #     nodes:
-  #       - pathSegment: example-extension
-  #         label: {{exampleName}}
-  #         url: https://{context.serviceProviderConfig.domain}/example-path
-  #         virtualTree: false
-  #         isolateView: true
-  #         loadingIndicator:
-  #           enabled: false
-  #         entityType: account
-  #         icon: {{exampleIcon}}
-  #         category:
-  #           id: community-extensions
-  #           order: 200
-  #         visibleForContext: contains(entityContext.account.permissions, 'example-permission')
-  #   target:
-  #       navMode: inplace
-  #   texts:
-  #     - locale: ""
-  #       textDictionary:
-  #         exampleName: Example Extension
-  #         deployment: Deployment
-  #         exampleIcon: https://example.com/example-icon.svg
-  #     - locale: en
-  #       textDictionary:
-  #         example:  Example Extension
-  #         deployment: Deployment
-  #         exampleIcon: https://example.com/example-icon.svg
-  #     - locale: de
-  #       textDictionary:
-  #         example:  Example Extension
-  #         deployment: Deployment.md
-  #         exampleIcon: https://example.com/example-icon.svg
+  # inlineConfiguration:
+  #   contentType: yaml # can be yaml or json
+  #   content: |
+  #     version: "3.0"
+  #     nodeConfiguration:
+  #       nodeDefaults:
+  #         baseUrl: https://{context.serviceProviderConfig.domain}
+  #         entityType: example
+  #       nodes:
+  #         - entityType: account
+  #           visibleForContext: contains(entityContext.account.permissions, 'example-permission')
+  #           luigiNodeConfig:
+  #             pathSegment: example-extension
+  #             label: {{exampleName}}
+  #             viewUrl: /example-path
+  #             virtualTree: false
+  #             isolateView: true
+  #             loadingIndicator:
+  #               enabled: false
+  #             icon: {{exampleIcon}}
+  #             category:
+  #               id: community-extensions
+  #               order: 200
+  #     texts:
+  #       - locale: ""
+  #         textDictionary:
+  #           exampleName: Example Extension
+  #           deployment: Deployment
+  #           exampleIcon: https://example.com/example-icon.svg
+  #       - locale: en
+  #         textDictionary:
+  #           example:  Example Extension
+  #           deployment: Deployment
+  #           exampleIcon: https://example.com/example-icon.svg
+  #       - locale: de
+  #         textDictionary:
+  #           example:  Example Extension
+  #           deployment: Deployment.md
+  #           exampleIcon: https://example.com/example-icon.svg
 status:
   status: ready
   observedGeneration: 1
-  contentConfiguration: |
+  configurationResult: |
     version: "3.0"
     nodeConfiguration:
+      nodeDefaults:
+        baseUrl: https://{context.serviceProviderConfig.domain}
+        entityType: example
       nodes:
-        - pathSegment: example-extension
-          label: {{exampleName}}
-          url: https://{context.serviceProviderConfig.domain}/example-path?version=1.0
-          virtualTree: false
-          isolateView: true
-          loadingIndicator:
-            enabled: false
-          entityType: account
-          icon: {{exampleIcon}}
-          category:
-            id: community-extensions
-            order: 200
+        - entityType: account
           visibleForContext: contains(entityContext.account.permissions, 'example-permission')
-    target:
-        navMode: inplace
+          luigiNodeConfig:
+            pathSegment: example-extension
+            label: {{exampleName}}
+            viewUrl: /example-path
+            virtualTree: false
+            isolateView: true
+            loadingIndicator:
+              enabled: false
+            icon: {{exampleIcon}}
+            category:
+              id: community-extensions
+              order: 200
     texts:
       - locale: ""
         textDictionary:
@@ -136,13 +143,55 @@ status:
       message: The subroutine is complete
   
 ```
+### Additional Context
+
+#### How is the ContentConfiguration being used?
+
+The ContentConfiguration is used to drive the Portal UI - what UI's and Components are displayed and where. The Portal UI applies additional processing, in particular templating and filtering based on the current entity or user context.
+
+To better understand how the information will be requested see the following sequence diagram:
+
+```mermaid
+sequenceDiagram
+    actor u as User
+    participant pui as Portal UI
+    participant puis as Portal UI Server
+    participant mf as Local Microfrontend
+    participant exs as Extension Service
+    participant as as API Server
+    u->>pui: Access UI
+    pui->>pui: Local Development Mode?
+    alt active
+    pui->>mf: Download Local ContentConfiguration
+    mf-->>pui: Data
+    pui->>exs: Transform Microfrontend Content Configuration
+    alt invalid
+        exs-->>pui: Invalid Content
+        pui-->>u: Display Validation Error
+    else is well
+        exs-->>pui: Transformed Result (json)
+    end
+    end
+    pui->>puis: Get Config (/w transformed result)
+    puis->>puis: Retrieve Context
+    puis->>exs: Get merged ContentConfiguration for current context
+    exs->>as: Request ContentConfiguration for context
+    as-->>exs: Result
+    exs-->>puis: Merged content configuration (json)
+    puis->>puis: Apply templating to configuration
+    puis-->>pui: Respond with config
+    pui-->>u: Respond with UI
+```
+
 
 ## Benefits and Drawbacks
 
-- **Pros:**
+**Pros:**
 - This approach allows for verification and validation processes to occur prior to the configuration being applied.
 - This approach will improve the availability of the portal, as less remote requests are needed in order to construct the portal UI configuration.
-- **Cons:**
+
+**Cons:**
 - This approach limits the maximum ContentConfiguration size to the maximum size of a kubernetes resource.
 - If the extension provider configures the ContentConfiguration inline the spec and status aspects of the kubernetes resources will reduce the maximum size of the ContentConfiguration that can be processed.
 - There is no ad hoc processing trigger in case the remote ContentConfiguration changes. Changes will only be applied once the Extension Manager reconciles the resource again. This could be mitigated, for example by using a version url parameter to the remote configuration.
+
