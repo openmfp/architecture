@@ -25,7 +25,7 @@ The ultimate objective isn't to envision a distant future scenario, but to propo
 
 ### Loosely Coupled Account with a Service-Specific Onboarding Experience
 
-In this scenario, the account management is solely responsible for creating and managing accounts. Services that wish to integrate into the openmfp ecosystem must implement a service-specific onboarding experience. This includes creating a service-specific resources and linking persisting the link to the central account management.
+In this scenario, the account management is solely responsible for creating and managing accounts. Services that wish to integrate into the openmfp ecosystem must implement a service-specific onboarding experience. This includes creating service-specific resources and persisting the link to the central account management.
 
 ![Account Management Overview](assets/account-management-and-service-integration/account-management-overview.drawio.png)
 
