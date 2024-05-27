@@ -3,7 +3,7 @@
 
 ## Context and Problem Statement
 
-This document provides an outline for the central account management of openmfp and its interaction with contributing services. In this context a account entity is meant to be a grouping entity that groups several resources - similar to a hyperscaler account. In openmfp the account will allow users to group resources of underlying services indirectly. It is also a key entity that other aspects of openmfp like extensions will build upon.
+This document provides an outline for the central account management of openmfp and its interaction with contributing services. In this context, an account entity is meant to be a grouping entity that groups several resources - similar to a hyperscaler account. In openmfp, the account will allow users to group resources of underlying services indirectly. It is also a key entity that other aspects of openmfp, like extensions, will build upon.
 
 The ultimate objective isn't to envision a distant future scenario, but to propose a short to mid-term strategy that allows the integration of services into the openmfp ecosystem.
 
