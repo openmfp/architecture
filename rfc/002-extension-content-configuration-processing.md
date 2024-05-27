@@ -1,5 +1,5 @@
 
-# RFC for openMFP Extension Management - CDM Processing
+# RFC for openMFP Extension Management - Content Configuration Processing
 
 ## Context and Problem Statement
 
