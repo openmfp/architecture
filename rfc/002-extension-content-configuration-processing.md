@@ -27,7 +27,7 @@ The openMFP Portal dynamically evaluates the installed extensions and surfaces t
 
 The Extension Manager will provide a custom resource definition - Content Configuration - that allows extension providers to describe how their extension should be integrated into the portal in a declarative way. The Extension Manager will then process the CC and store the observed state in its database. The Portal, when rendering the UI will then query for these content configuration resources and consider the processed information from the status.
 
-There is 1-1 relationship between *ExtensionClass* and *ContentConfiguration* resources. To create this relationship a label *extensionClassName* must be configured in the ContentConfiguration containing the name of the associated ExtensionClass.
+There is 1-n relationship between *ExtensionClass* and *ContentConfiguration* resources. To create this relationship a label *extensionClassName*, *extensionDomain* and *extensionNamespace* must be configured in the ContentConfiguration containing the name of the associated ExtensionClass.
 
 The design of the `ContentConfiguration` should be as follows:
 
@@ -40,6 +40,8 @@ metadata:
   generation: 1
   labels:
     extensionClassName: extension-class-sample1
+    extensionDomain: extension.core.openmfp.io
+    extensionNamespace: default
 spec:
   remoteConfiguration:
     # The remote configuration can be a remote yaml or json file. 
