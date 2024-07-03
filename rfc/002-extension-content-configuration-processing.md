@@ -40,7 +40,6 @@ metadata:
   generation: 1
   labels:
     extensionclass.openmfp.io: extension-class-sample1
-    extensionNamespace: default
 spec:
   remoteConfiguration:
     # The remote configuration can be a remote yaml or json file. 
