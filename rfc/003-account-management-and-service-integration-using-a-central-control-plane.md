@@ -24,8 +24,8 @@ A connected service provider will be able to expose its service specific API def
 
 The OpenMFP Control Plane will be KRM based. Using a Kubernetes Cluster directly as central control plane has various disadvantages:
 * Kubernetes by default, as it was build for running workloads, exposes a number of resources that are not relevant for the way OpenMFP intends to use the Central Control Plane, eg. Pods, Deployments and more.
-* API extensions using Custom Resource Definitions are visible across all Namespaces of a Kubernetes cluster. Limiting visibility of available API is a desirable feature.
-* Namespaces are by default non hierachical. To be used as accounting structure namespaces can only be used as a pseudo hierachical structure by implementing a parent relationship between namespaces.
+* API extensions using Custom Resource Definitions are visible across all Namespaces of a Kubernetes cluster. Limiting visibility of available APIs is a desirable feature.
+* Namespaces in kubernetes are by default non hierachical. To be used as accounting structure namespaces can only be used as a pseudo hierachical structure by implementing a parent relationship between namespaces.
 * One OIDC configuration per kubernetes cluster. It is not possible to use a different OIDC configuration on an account/namespace level.
 * Its rather heavy weight. There are several control plane components that won't be used if a Kubernetes Cluster is only used as declarative control plane.
 
@@ -36,13 +36,22 @@ KCP out of the box brings features that address above disadvantages of a standar
 * Workspaces can be hierachically structured
 * No additional unused control plane components 
 
-Some features are missing in KCP, but it is planned to address them with the KCP team:
+Some features are missing in KCP, but it is planned to address them with the KCP team, for example:
 * OIDC configuration on the workspace level
 * Ability to configure authorization webhooks
 
 The OpenMFP Control Plane based on KCP will then be able to utilize the Workspace Concept as a basis for a technical account model:
 
 ![account-hierarchy](./assets/account-hierarchy.png)
+
+### Root Workspace
+KCP has by default a root workspace that will be used as the root of all workspaces.
+
+### Organization Workspace
+The Organization Workspace will be used as the top level Tenancy. It will be possible in OpenMFP to have multiple Organization Workspaces to model different tenants of the platform - for example for different customers.
+
+### Project Workspaces
+Project Workspaces will hold the resources created by the consumers of the Platform. Project Workspaces can have child Project Workspaces to further structure used resources.
 
 ## Control Plane and Authorization
 
@@ -55,4 +64,4 @@ It is planned that the control plane is configured to use authorization webhooks
 
 It is desirable that the End User Interface displays and modifies the data that is available in the user facing API of a respective service. As a result a consumer user interface should directly leverage and modify the data available in the central control plane. To properly reflect the available authorizations of the consumer UI, the UI may need to directly integrate to the IAM for permission checks.
 
-Operators of respective services will likely need access to additional information that is typically hidden from end users of a service. Therefore, it is likely that the Service Operators will need to use an Operation focussed interface that is directly interacting with the service specific API. Also, Service Operators may be external users not known by the openMFP platform and a different authorization concept may be needed.
+Operators of respective services will likely need access to additional information that is typically hidden from end users of a service. Therefore, it is likely that the Service Operators will need to use an Operation focussed interface that is directly interacting with the service specific API. Also, Service Operators may be external users not known by the OpenMFP platform and a different authorization concept would apply.
