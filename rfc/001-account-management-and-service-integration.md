@@ -1,9 +1,6 @@
 
 # RFC for openMFP Account Management and Service Integration
 
-> [!WARNING]  
-> This RFC is invalidated, as it is replaced by [RFC for openMFP Account Management and Service Integration using a Central Control Plane](./003-account-management-and-service-integration-using-a-central-control-plane.md). Please disregard.
-
 ## Context and Problem Statement
 
 This document provides an outline for the central account management of openmfp and its interaction with contributing services. In this context, an account entity is meant to be a grouping entity that groups several resources - similar to a hyperscaler account. In openmfp, the account will allow users to group resources of underlying services indirectly. It is also a key entity that other aspects of openmfp, like extensions, will build upon.

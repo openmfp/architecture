@@ -16,7 +16,7 @@ In Order to achieve this goal the overall architecture needs to include extensib
 * Common CLI tooling with the well known kubectl
 * Common CLI extensibility approaches with kubectl plugins
 
-A connected service provider will be able to expose its service specific API definitions, configure its end user micro frontend and also configure how the identity and access service should secure access to its entities for end users. Typically service providers will want to expose their end user facing APIs while also maintaining an internal facing version of given API's internally to avoid exposing unrelevant information to the API consumer. The OpenMFP Control Plane supports this setup by only syncing the end user facing api's between the central control plane and the service provider API.
+A connected service provider will be able to expose its service specific API definitions, configure its end user micro frontend and also configure how the identity and access service should secure access to its entities for end users. Typically service providers will want to expose their end user facing APIs while also maintaining an internal facing version of given API's internally to avoid exposing internal or not-relevant information to the API consumer. The OpenMFP Control Plane supports this setup by only syncing the end user facing api's between the central control plane and the service provider API.
 
 ![container-diagram](./assets/openmfp-c4-container-diagram.drawio.png)
 
@@ -28,30 +28,20 @@ The OpenMFP Control Plane will be KRM based. Using a Kubernetes Cluster directly
 * Namespaces in kubernetes are by default non hierachical. To be used as accounting structure namespaces can only be used as a pseudo hierachical structure by implementing a parent relationship between namespaces.
 * One OIDC configuration per kubernetes cluster. It is not possible to use a different OIDC configuration on an account/namespace level.
 * Its rather heavy weight. There are several control plane components that won't be used if a Kubernetes Cluster is only used as declarative control plane.
+* The tight coupling of control plane and runtime environment makes it harder to move workloads between different runtime environments.
 
 Due to above disadvantages OpenMFP is looking to integrate into [KCP](https://kcp.io)(https://kcp.io) and use it as a technology to provide central control plane features.
 
 KCP out of the box brings features that address above disadvantages of a standard Kubernetes Cluster:
 * Workspaces concept creates additional isolations for resources and API's
-* Workspaces can be hierachically structured
+* Workspaces can be hierarchically structured
 * No additional unused control plane components 
 
 Some features are missing in KCP, but it is planned to address them with the KCP team, for example:
 * OIDC configuration on the workspace level
 * Ability to configure authorization webhooks
 
-The OpenMFP Control Plane based on KCP will then be able to utilize the Workspace Concept as a basis for a technical account model:
-
-![account-hierarchy](./assets/account-hierarchy.png)
-
-### Root Workspace
-KCP has by default a root workspace that will be used as the root of all workspaces.
-
-### Organization Workspace
-The Organization Workspace will be used as the top level Tenancy. It will be possible in OpenMFP to have multiple Organization Workspaces to model different tenants of the platform - for example for different customers.
-
-### Project Workspaces
-Project Workspaces will hold the resources created by the consumers of the Platform. Project Workspaces can have child Project Workspaces to further structure used resources.
+The OpenMFP Control Plane based on KCP will then be able to utilize the Workspace Concept as a basis for a technical account model. Further RFC's will go into further detail on how Accounts/Workspaces will be designed. 
 
 ## Control Plane and Authorization
 
