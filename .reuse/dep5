@@ -1,9 +1,0 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: architecture
-Upstream-Contact: 
-Source: https://github.com/openmfp/architecture
-
-Files: *
-Copyright: 2024 SAP SE or an SAP affiliate company and openMFP contributors and architecture contributors.
-License: Apache-2.0
-
