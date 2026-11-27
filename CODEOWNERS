@@ -1,5 +1,2 @@
 # Default code owners
 * @openmfp/tsc
-
-# CI and workflow files require CI maintainer review
-/.github/ @openmfp/ci-maintainers
